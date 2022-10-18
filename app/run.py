@@ -19,34 +19,36 @@ class Main():
             self.extra_tags = self.cfg["sources-tags"]
             logger.info(f'Extra tags: {self.extra_tags}')
         self.custom_init()
-
+    """
     def run(self):
         t = time.time()
         while True:
             t_aux = time.time()
-            if t_aux - t > 2: # Each 5 sec send info  
+            if t_aux - t > 1: # Each 1 sec send info  
                 data = {
                         'camID' : 0,
                         'pessoasEntrando': random.randint(1,5)
                     }
-                self.save_metrics(data) # funcao para enviar dados para prometheus
+                dt_now = datetime.now(timezone.utc).astimezone().isoformat()
+                self.save_metrics(data, dt_now) # funcao para enviar dados para prometheus
                 print(data)
                 t = t_aux
-
+    """
+    
     def run_2(self):
         lines = open('log.txt', 'r').read().split('\n')
         for line in lines[:-1]:
             line_arr = line.split(',')
             data  = {
                 'camID' : line_arr[0],
-                'dt_now' : f"{str(line_arr[1][1:]).replace(' ','T')}-05:00",
+                #'dt_now' : f"{str(line_arr[1][1:]).replace(' ','T')}.626881-05:00",
                 'person_status' : line_arr[2][1:],
                 'people_count' : line_arr[3][1:]
             }
-            print(data)
-            self.save_metrics(data)
-
-
+            dt_now = f"{str(line_arr[1][1:]).replace(' ','T')}.626881-05:00"
+            #print(data, dt_now)
+            self.save_metrics(data, dt_now)
+            time.sleep(1)
 
     def custom_init(self) -> None:
         """Initialize brokers, probes and handlers for this profile. Overriding custom_init method from base."""
@@ -65,19 +67,20 @@ class Main():
         metricSaver.daemon = True
         metricSaver.start()
 
-    def save_metrics(self, data: dict) -> None:
+    def save_metrics(self, data: dict, dt_now: str) -> None:
         """Process inference data sent from probes, create messages and save them.
 
         Args:
             data (dict): Dictionary with data to be saved
         """
         messages_dict = {"timeseries_db": []}
-        dt_now = datetime.now(timezone.utc).astimezone().isoformat()
+        #dt_now = datetime.now(timezone.utc).astimezone().isoformat()
+        #print(dt_now, type(dt_now))
 
         # Custom message
-        objs_in_frame = {"measurement": "KPI_2",
+        objs_in_frame = {"measurement": "KPI_6",
                         "tags": {"measurement_type": "inference"},
-                        "time": data['dt_now'],
+                        #"time": str(data['dt_now']),
                         "time": dt_now,
                         "fields": data}
         messages_dict["timeseries_db"].append(objs_in_frame)
@@ -126,4 +129,5 @@ class Main():
 
 
 obj = Main()
+#obj.run()
 obj.run_2()
