@@ -1,0 +1,10 @@
+pyyaml
+pybind11
+numpy
+opencv-python
+watchdog
+protobuf
+gpustat
+prometheus-client
+jsonschema
+#tritonclient[grpc]==2.22.3 

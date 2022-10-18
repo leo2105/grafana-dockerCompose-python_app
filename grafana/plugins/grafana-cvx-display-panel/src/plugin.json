@@ -1,0 +1,24 @@
+{
+  "type": "panel",
+  "name": "grafana-cvx-display",
+  "id": "atos-grafana-cvx-display",
+  "info": {
+    "description": "",
+    "author": {
+      "name": "Atos",
+      "url": "https://atos.net"
+    },
+    "keywords": [],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  }
+}

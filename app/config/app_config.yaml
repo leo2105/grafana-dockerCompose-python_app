@@ -1,0 +1,114 @@
+inference:
+  trafficcamnet:
+    local-config-path: '/app/config/peoplenet_config.txt' # path to a nvinfer config file to a trafficcamnet model
+    triton-config-path: '/app/config/trafficcamnet_nvinferserver_primary.txt'
+    use-triton: 0
+    unique-id: 1
+    interval: 3
+    infer-on-gie-id: -1
+    infer-on-class-ids: -1
+bounding-boxes:
+  border-color: red # color of the bboxes. Can be a string or a rgba tuple/list. Ex.: blue or (0,0,255,1)
+  border-width: -1 # value in pixels of border width of the bboxes. If < 1 the default value is used
+tracker: 
+  enable: 1
+  config-path: '/app/config/nvtracker_tracker_config_ds6.txt' # path to a nvtracker config file
+  unique-id: 3
+  operate-on-gie-id: 1
+nvdsanalytics:
+  enable: 1
+  config-path: "/app/config/config_nvdsanalytics.txt" # path to a nvdsanalytics config file
+message-queue:
+  target: 'kafka'
+  host: 'kafka' # kafka host name
+  port: '9092' # kafka port
+  topic: 'ds_analytics' # topic to send all inference data
+timeseries-db:
+  target: 'prometheus'
+  db: 'smartcity' # influxdb db name
+  host: 'prometheus' # influxdb host name
+  port: 8086 # influxdb port
+rtsp-sources:
+  max-latency: 2000
+  do-retransmission: 1
+  drop-on-latency: 1
+streammux:
+  #width: 1920 # width of frames of each camera after muxer 
+  width: 960
+  #height: 1080 # height of frames of each camera after muxer
+  height: 544
+  batched-push-timeout: 40000 # timeout in microseconds to wait after the first buffer is available to push the batch
+  max-batch-size: 6 # number of frames tosend to inference in each batch (can be overridden in the code)
+tiler:
+  rgba-buffers: 0
+  width: 1920 # width of frames of each camera after muxer 
+  #width: 1280
+  height: 1080 # height of frames of each camera after muxer
+  #height: 720
+osd:
+  display-bbox: 1 # whether the nvosd is going to draw bounding boxes masks or not
+  display-mask: 1 # whether the nvosd is going to draw segmentation masks or not
+  display-text: 1 # whether the nvosd is going to draw labels or not
+  process-mode: 1 # whether the nvosd is going to use CPU_MODE (0) or GPU_MODE (1)
+framehash:
+  enable: 1 # whether the framehash plugin is enabled or not
+  hash-threshold: 22 # distance threshold to generate shift event
+  time-period: 10 # time in seconds to check for camera shift
+output-stream:
+  #type: 'udp-gstraw' # can be 'screen', 'udp-gstraw', 'udp-videoraw', 'udp-h264' or 'fakesink'
+  type: 'hls-sink'
+  display: 'hls_display_1' # host name of the target stream selector
+  updsink-port-num: 5400 # port of the target stream selector
+  mtu: 9000
+  encoder-tune: zerolatency
+  encoder-profile: fast
+  width: 1920
+  height: 1080
+  color-format: I420
+  framerate: 25
+  on-demand:
+    enable: 0
+    keep-alive: 15
+    message-queue:
+      target: 'kafka'
+      host: 'kafka'
+      port: '9092'
+      topic: 'output_stream'  
+sources-tags:
+  group: 'Av. Abdon Calderon'
+  host: 'safecity-0-1-1'
+reconnection:
+  source-reset-interval: 15 # time in seconds for each source reset when there are no buffers/connection
+  rtsp-reconnect-interval-sec: 15 # time in seconds for each reconnection try when resetting source
+restart:
+  seconds-without-buffers: 40  # time in seconds to wait before shutting down the pipeline if FPS count is 0
+debug-graphs: 1 # whether the pipeline is going to use graphviz to save png files or simply shutdown
+sources:
+  # -   name: 'claro_test_calcada'
+  #     id: 0
+  #     uri: 'rtsp://rtsp-server:8554/claro_test_calcada'
+  # -   name: 'claro_test_entrada'
+  #     id: 1
+  #     uri: 'rtsp://rtsp-server:8554/claro_test_entrada'
+  # -   name: 'claro_test_cx1'
+  #     id: 2
+  #     uri: 'rtsp://rtsp-server:8554/claro_test_cx1'
+  # -   name: 'claro_test_cx2'
+  #     id: 3
+  #     uri: 'rtsp://rtsp-server:8554/claro_test_cx2'
+  ###
+  - name: 'loja_calcada_video'
+    id: 0
+    uri: 'rtsp://rtsp-server:8554/loja_calcada_video'
+  - name: 'loja_entrada_video'
+    id: 1
+    uri: 'rtsp://rtsp-server:8554/loja_entrada_video'
+  - name: 'loja_caixa_video'
+    id: 2
+    uri: 'rtsp://rtsp-server:8554/loja_caixa_video'
+  - name: 'loja_corredor_1_video'
+    id: 3
+    uri: 'rtsp://rtsp-server:8554/loja_corredor_1_video'
+  - name: 'loja_corredor_2_video'
+    id: 4
+    uri: 'rtsp://rtsp-server:8554/loja_corredor_2_video'
