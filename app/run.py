@@ -78,7 +78,7 @@ class Main():
         #print(dt_now, type(dt_now))
 
         # Custom message
-        objs_in_frame = {"measurement": "KPI_6",
+        objs_in_frame = {"measurement": "KPI_1",
                         "tags": {"measurement_type": "inference"},
                         #"time": str(data['dt_now']),
                         "time": dt_now,
